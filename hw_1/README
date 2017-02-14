@@ -1,0 +1,12 @@
+Before running CUDA code, run the following code to add CUDA bin to PATH
+
+export PATH=$PATH:/usr/local/cuda-7.5/bin
+
+To run the sequential implementation:
+1) Compile: gcc hw1_seq.c -o hw1_seq.o
+2) Run: ./hw1_seq.o <array_size>
+
+array_size must be an int
+
+To run the parallel implementation:
+
