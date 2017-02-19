@@ -14,7 +14,8 @@ float * make_array(int size) {
 
 	int i;
 	for (i = 0; i < size; i++) {
-		array[i] = rand() % RANGE;
+		//array[i] = rand() % RANGE;
+		array[i] = (float)(i%10);
 	}
 
 	return array;
@@ -63,5 +64,4 @@ int main(int argc, char** argv) {
 	printf("Time taken to run sequential algorithm: %d msec\n", diff);
 
 	return 0;
-
 }
