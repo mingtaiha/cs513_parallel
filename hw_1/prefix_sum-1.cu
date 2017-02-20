@@ -37,6 +37,38 @@ void downsweep(int n, double *x) {
     __syncthreads();
 }
 
+void validate(int n, double *x, double *y){
+    // printf("inside validate\n");
+    // for (int i = 0; i < n; i++) {
+    //     printf("%d\n", y[i]);
+    // }
+    for (int i = 1; i < n; i++) {
+        y[i] += y[i-1];
+    }
+
+    for (int i = 1; i < n; i++) {
+        y[i] += y[i-1];
+    }
+
+    // printf("--------\n");
+    // for (int i = 0; i < n; i++) {
+    //    cout << y[i] << endl;
+    // }
+
+    int correct = 0;
+    int incorrect = 0;
+    for (int i = 0; i < n; i++) {
+        if (x[i] == y[i]) {
+            correct++;
+        }
+        else {
+            incorrect++;
+        }
+    }
+    printf("Number correct: %d\n",correct);
+    printf("Number incorrect: %d\n",incorrect);
+}
+
 int main(int argc, const char * argv[]) {
 
     if (argc != 2) {
@@ -80,9 +112,15 @@ int main(int argc, const char * argv[]) {
 
     cudaMalloc(&d_x, n * sizeof(double));
 
+    double *seq;
+    seq = (double*)malloc(n * sizeof(double));
+
     for (int i = 0; i < n; i++) {
         fscanf(fp, "%lg\n", &x[i]);
     }
+    memcpy(seq, x, n * sizeof(double));
+
+
 
 /*for (int i = 0; i < n; i++) {
     x[i] = (double)(i % 10);
@@ -105,10 +143,11 @@ int main(int argc, const char * argv[]) {
 
     cudaMemcpy(x, d_x, n * sizeof(double), cudaMemcpyDeviceToHost);
 
-    for (int i = 0; i < n; i++) {
-       // cout << i << " " << x[i] << endl;
-       cout << x[i] << endl;
-    }
+    // for (int i = 0; i < n; i++) {
+    //    cout << x[i] << endl;
+    // }
+
+    validate(n, x, seq);
 
         //Write b into output file
     fp = fopen("output.txt","w");
