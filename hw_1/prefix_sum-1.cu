@@ -70,78 +70,47 @@ int main(int argc, const char * argv[]) {
     fscanf(fp, "%d\n", &n);
     printf("%d\n", n);
 
-   /* double *x, *d_x;
+    // sum(a, b, n);
 
-    x = (double*)malloc(n*sizeof(double));
-    cudaMalloc(&d_x, n* sizeof(double));
-    // double* b = malloc(n*sizeof(double));
+    //n = 4500;
 
-    for (int i=0; i<n; i++) {
+    double *x, *d_x;
+
+    x = (double*)malloc(n * sizeof(double));
+
+    cudaMalloc(&d_x, n * sizeof(double));
+
+    for (int i = 0; i < n; i++) {
         fscanf(fp, "%lg\n", &x[i]);
     }
-    fclose(fp);
-
-    //Main function
-    cudaMemcpy(d_x, x, n * sizeof(double), cudaMemcpyHostToDevice);
-
-    upsweep <<< (n + THREAD - 1) / THREAD, THREAD>>> (n, d_x);
-    cudaDeviceSynchronize();
-
-    downsweep <<< (n + THREAD - 1) / THREAD, THREAD>>> (n, d_x);
-    cudaDeviceSynchronize();
-
-    upsweep <<< (n + THREAD - 1) / THREAD, THREAD>>> (n, d_x);
-    cudaDeviceSynchronize();
-
-    downsweep <<< (n + THREAD - 1) / THREAD, THREAD>>> (n, d_x);
-    cudaDeviceSynchronize();
-
-
-    for (int i = 0; i < 10; i++) {
-        cout << x[i] << endl;
-    }
-*/
-    // sum(a, b, n);
-	
-//n = 4500;
-
-double *x, *d_x;
-
-x = (double*)malloc(n * sizeof(double));
-
-cudaMalloc(&d_x, n * sizeof(double));
-
-for (int i = 0; i < n; i++) {
-    fscanf(fp, "%lg\n", &x[i]);
-}
 
 /*for (int i = 0; i < n; i++) {
     x[i] = (double)(i % 10);
 }
 */
-fclose(fp);
+    fclose(fp);
 
-cudaMemcpy(d_x, x, n * sizeof(double), cudaMemcpyHostToDevice);
-upsweep <<< (n + THREAD - 1) / THREAD, THREAD>>> (n, d_x);
-cudaDeviceSynchronize();
+    cudaMemcpy(d_x, x, n * sizeof(double), cudaMemcpyHostToDevice);
+    upsweep <<< (n + THREAD - 1) / THREAD, THREAD>>> (n, d_x);
+    cudaDeviceSynchronize();
 
-downsweep <<< (n + THREAD - 1) / THREAD, THREAD>>> (n, d_x);
-cudaDeviceSynchronize();
+    downsweep <<< (n + THREAD - 1) / THREAD, THREAD>>> (n, d_x);
+    cudaDeviceSynchronize();
 
-upsweep <<< (n + THREAD - 1) / THREAD, THREAD>>> (n, d_x);
-cudaDeviceSynchronize();
+    upsweep <<< (n + THREAD - 1) / THREAD, THREAD>>> (n, d_x);
+    cudaDeviceSynchronize();
 
-downsweep <<< (n + THREAD - 1) / THREAD, THREAD>>> (n, d_x);
-cudaDeviceSynchronize();
+    downsweep <<< (n + THREAD - 1) / THREAD, THREAD>>> (n, d_x);
+    cudaDeviceSynchronize();
 
-cudaMemcpy(x, d_x, n * sizeof(double), cudaMemcpyDeviceToHost);
+    cudaMemcpy(x, d_x, n * sizeof(double), cudaMemcpyDeviceToHost);
 
-for (int i = 0; i < n; i++) {
-   // cout << i << " " << x[i] << endl;
-   cout << x[i] << endl;
-}
+    for (int i = 0; i < n; i++) {
+       // cout << i << " " << x[i] << endl;
+       cout << x[i] << endl;
+    }
 
-    //Write b into output file
+        //Write b into output file
     fp = fopen("output.txt","w");
     if (fp == NULL) {
         printf("The file can not be created!\n");
@@ -151,10 +120,11 @@ for (int i = 0; i < n; i++) {
     for (int i=0; i<n; i++)
         fprintf(fp, "%lg\n", x[i]);
     fclose(fp);
-    
+
     cudaFree(d_x);
     free(x);
-    // free(b);
+        // free(b);
     printf("Done...\n");
     return 0;
 }
+
