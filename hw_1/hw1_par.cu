@@ -167,7 +167,7 @@ int main(int argc, char** argv)
 		y[i] = y[i] + y[i - 1];
 	}
 	seq_pass = clock() - seq_start;
-	cout << "Time taken: " << seq_pass * 1000 / CLOCKS_PER_SEC << endl;
+	cout << "Time taken (ms): " << seq_pass * 1000 / CLOCKS_PER_SEC << endl;
 
 	cout << "Parallel Version" << endl;
 	par_start = clock();
@@ -222,7 +222,7 @@ int main(int argc, char** argv)
 	scat_part_sum <<<nblocks, TPB>>> (d_x, d_x1);
 	cudaDeviceSynchronize();
 	par_pass = clock() - par_start;
-	cout << "Time taken: " << par_pass * 1000 / CLOCKS_PER_SEC << endl;
+	cout << "Time taken (ms): " << par_pass * 1000 / CLOCKS_PER_SEC << endl;
 
 /*	
 	thrust::inclusive_scan(x, x + size, x);

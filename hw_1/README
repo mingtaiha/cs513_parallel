@@ -8,6 +8,6 @@ array_size must be an int
 
 To compile and run the parallel implementation:
 1) Compile : nvcc hw1_par.cu -o hw1_par.o
-2) Run : /hw1_par.o 33554432 > out
+2) Run : /hw1_par.o 33554432
 
-Note: This code can run any power of 2 greater than 2^20 and less than 2^26
+Note: This code can run any the array sizes which are power of 2, and greater than 2^20 and less than 2^26
