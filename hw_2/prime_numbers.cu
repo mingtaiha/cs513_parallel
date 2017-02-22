@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdio>
 #include <cmath>
 #include <cstdlib>
 
@@ -33,9 +34,25 @@ void print_prime(int * arr, int n) {
 	}
 }
 
+void diff_prime(int * arr1, int * arr2, int n) {
+
+	int flag = 1;
+	for (int i = 0; i < (n-1); i++) {
+		if (arr1[i] != arr2[i]) {
+			if (flag == 1) { flag = 0; }
+			cout << "Arrays are different\n";
+			cout << (i+2) << " " << arr1[i] << " " << arr2[i] << endl;
+		}
+	}
+	if (flag == 1) {
+		cout << "Arrays are the same\n";
+	}
+}	
+
+
 void seq_sieve(int * arr, int n) {
 
-	int sqrt_n = int(ceil(sqrt(float(n))));
+	int sqrt_n = int(ceil(sqrt(int(n))));
 	int i_sqr;	
 
 	for (int i = 2; i <= sqrt_n; i++) {
@@ -55,19 +72,15 @@ void par_sieve(int * d_arr, int n, int sqrt_n) {
 	__syncthreads();
 
 	for (int i = 2; i <= sqrt_n; i++) {
-		if (tid < sqrt_n) {	
+		if (tid <= sqrt_n) {	
 			if (d_arr[i-2] == 1) {
 				for (int j = 0; j < n; j+=sqrt_n) {
-					if (((j + tid + i) < n) && (((j + tid + i) % i) == 0)) {
-						d_arr[j + tid + i] = 0;
+					if ((j + tid + (2*i) - 2 < n) && (((j + tid + i) % i) == 0)) {
+						d_arr[j + tid + (2*i) - 2] = 0;
 					}
-					__syncthreads();
 				}
-				__syncthreads();
 			}
-			__syncthreads();
 		}
-		__syncthreads();
 	}
 
 }
@@ -87,24 +100,33 @@ int main(int argc, char** argv) {
 	seq_sieve(seq_array, n);
 	//print_prime(seq_array, n);
 
-	int sqrt_n = int(ceil(sqrt(float(n))));
+	int sqrt_n = int(ceil(sqrt(int(n))));
 	int * par_array = make_array_2_to_n(n);
 	int * d_par_array;
 
 	cudaMalloc((void**)&d_par_array, sizeof(int) * (n-1));
 	cudaMemcpy((void*)d_par_array, (void*)par_array, sizeof(int) * (n-1), cudaMemcpyHostToDevice);
 
-	int nblocks = sqrt_n;
-	int tpb = sqrt_n;
+	int tpb = 1024;
+	int nblocks = n / tpb + 1;
 	
 	cout << "parallel \n\n\n";
 
 	par_sieve<<<nblocks, tpb>>>(d_par_array, n, sqrt_n);
 	cudaDeviceSynchronize();
-	
-	cudaMemcpy((void*)par_array, (void*)d_par_array, sizeof(int) * (n-1), cudaMemcpyDeviceToHost);
-	print_prime(par_array, n);
 
+	cudaError_t error = cudaGetLastError();
+	if(error != cudaSuccess)
+	{
+		// print the CUDA error message and exit
+		printf("CUDA error: %s\n", cudaGetErrorString(error));
+	}
+	
+
+	cudaMemcpy((void*)par_array, (void*)d_par_array, sizeof(int) * (n-1), cudaMemcpyDeviceToHost);
+	//print_prime(par_array, n);
+
+	//diff_prime(seq_array, par_array, n);
 
 	return 0;
 
