@@ -47,7 +47,6 @@ void diff_prime(int * arr1, int * arr2, int n) {
 			if (flag == 1) { flag = 0; }
 			cout << "Arrays are different\n";
 			cout << (i+2) << " " << arr1[i] << " " << arr2[i] << endl;
-			return;
 		}
 	}
 	if (flag == 1) {
@@ -82,19 +81,21 @@ void par_sieve(int * d_arr, int n, int sqrt_n) {
 	// Go from i = 2, ... , sqrt_n
 	for (int i = 2; i <= sqrt_n; i++) {
 		// Only uses sqrt_n threads (to minimize using sqrt(n) processors
-		if (tid < sqrt_n) {
+		if (tid <= sqrt_n) {
 			// Checks if marked as 1 (prime)
 			if (d_arr[i-2] == 1) {
-				// Perform interleaved work. With sqrt_n processors, each processor
-				// goes in increments of i, starting from 2i and not exceeding n.
-				// This traversal ensures that every thread will set to 0 a number
-				// which is a multiple of i.
+				// Perform interleaved work. With sqrt_n subarrays of sqrt_n elements
+				// each, every thread (of sqrt_n threads total) will check one element in
+				// the subarray and mark as 0 (composite) if the element is a multiple
+				// of i (2, ..., sqrt_n).
 
-				// This implementation does not introduce more work than the original
-				// implementation. So, there is O(n*log(log(n))) work. With sqrt_n
-				// processors, I can use O(sqrt_n * log(log(n)))
-				for (int j = 0; ((j + tid + 1) * i + (i-2)) < (n-1); j+=sqrt_n) {
-					d_arr[(j + tid + 1) * i + (i - 2)] = 0;
+				// Checking elements in this way checks n elements (in sqrt_n blocks)
+				// sqrt_n number of times (2, ..., n). So, O(n^(3/2)) is done. With 
+				// sqrt_n processors, running time is O(n)
+				for (int j = 0; j < n; j+=sqrt_n) {
+					if ((j + tid + (2*i) - 2 < n) && (((j + tid + i) % i) == 0)) {
+						d_arr[j + tid + (2*i) - 2] = 0;
+					}
 				}
 			}
 		}
@@ -124,17 +125,8 @@ int main(int argc, char** argv) {
 	int * par_array = make_array_2_to_n(n);
 	int * d_par_array;
 
-	cout << "cudaMalloc\n";
-	cudaError_t malloc_error = cudaMalloc((void**)&d_par_array, sizeof(int) * (n-1));
-	if (malloc_error != cudaSuccess) {
-		printf("cudaMalloc error: %s\n", cudaGetErrorString(malloc_error));
-	}
-
-	cout << "cudaMemcpyHostToDevice\n";
-	cudaError_t memcpy_to_d_error = cudaMemcpy((void*)d_par_array, (void*)par_array, sizeof(int) * (n-1), cudaMemcpyHostToDevice);
-	if (malloc_error != cudaSuccess) {
-		printf("cudaMemcpyHostToDevice: %s\n", cudaGetErrorString(memcpy_to_d_error));
-	}
+	cudaMalloc((void**)&d_par_array, sizeof(int) * (n-1));
+	cudaMemcpy((void*)d_par_array, (void*)par_array, sizeof(int) * (n-1), cudaMemcpyHostToDevice);
 
 	// Defining threads per block (tpb), and number of blocks to schedule
 	int tpb = 1024;
@@ -147,17 +139,18 @@ int main(int argc, char** argv) {
 	cudaDeviceSynchronize();
 
 	// Error checking
-	cudaError_t kernel_error = cudaGetLastError();
-	if (kernel_error != cudaSuccess) {
+	cudaError_t error = cudaGetLastError();
+	if(error != cudaSuccess)
+	{
 		// print the CUDA error message and exit
-		printf("CUDA error: %s\n", cudaGetErrorString(kernel_error));
+		printf("CUDA error: %s\n", cudaGetErrorString(error));
 	}
 	
 
 	cudaMemcpy((void*)par_array, (void*)d_par_array, sizeof(int) * (n-1), cudaMemcpyDeviceToHost);
 	//print_prime(par_array, n);
 
-	diff_prime(seq_array, par_array, n);
+	//diff_prime(seq_array, par_array, n);
 
 	return 0;
 
