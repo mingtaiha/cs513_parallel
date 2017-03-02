@@ -2,10 +2,11 @@
 #include <cstdio>
 #include <cmath>
 #include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
-
+#define min(a, b) ((a <= b) ? a : b)
 
 
 int * make_array_2_to_n(int n) {
@@ -73,14 +74,18 @@ void seq_sieve(int * arr, int n) {
 }
 
 __global__
-void par_sieve(int * d_arr, int n, int sqrt_n) {
+void par_sieve(int * d_arr, int n, int sqrt_n, int start, int end) {
 
 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x;
+	int min_i = min(start, 2);
+	int max_i = min(sqrt_n, end);
+
 	__syncthreads();
+
 
 	// Performs Sieve of Eratosthenese
 	// Go from i = 2, ... , sqrt_n
-	for (int i = 2; i <= sqrt_n; i++) {
+	for (int i = min_i; i <= max_i; i++) {
 		// Only uses sqrt_n threads (to minimize using sqrt(n) processors
 		if (tid < sqrt_n) {
 			// Checks if marked as 1 (prime)
@@ -111,14 +116,20 @@ int main(int argc, char** argv) {
 	int n = atoi(argv[1]);
 
 	// Making Array
+    cout << "sequential implementation\n";
 	int * seq_array = make_array_2_to_n(n);
 	//print_array(seq_array, n);
 	
 	// Sequential Sieve
+    clock_t start, seq_runtime;
+    start = clock();
 	seq_sieve(seq_array, n);
+    seq_runtime = clock() - start;
+    cout << "sequential run time (in milliseconds): " << (seq_runtime * 1000 / CLOCKS_PER_SEC) << endl;
 	//print_prime(seq_array, n);
+    cout << "\n\n";
 
-
+	cout << "parallel\n";
 	// Initializing variables for parallel execution
 	int sqrt_n = int(ceil(sqrt(int(n))));
 	int * par_array = make_array_2_to_n(n);
@@ -131,7 +142,11 @@ int main(int argc, char** argv) {
 	}
 
 	cout << "cudaMemcpyHostToDevice\n";
-	cudaError_t memcpy_to_d_error = cudaMemcpy((void*)d_par_array, (void*)par_array, sizeof(int) * (n-1), cudaMemcpyHostToDevice);
+
+    clock_t with_memcpy_start, with_memcpy_runtime;
+	with_memcpy_start = clock();
+
+    cudaError_t memcpy_to_d_error = cudaMemcpy((void*)d_par_array, (void*)par_array, sizeof(int) * (n-1), cudaMemcpyHostToDevice);
 	if (malloc_error != cudaSuccess) {
 		printf("cudaMemcpyHostToDevice: %s\n", cudaGetErrorString(memcpy_to_d_error));
 	}
@@ -140,11 +155,28 @@ int main(int argc, char** argv) {
 	int tpb = 1024;
 	int nblocks = n / tpb + 1;
 	
-	cout << "parallel \n\n\n";
-
+    clock_t without_memcpy_start, without_memcpy_runtime;
+	without_memcpy_start = clock();
 	// Calling Parallel Sieve
-	par_sieve<<<nblocks, tpb>>>(d_par_array, n, sqrt_n);
-	cudaDeviceSynchronize();
+    if (n <= 20000000) {
+        cout << "Kernel call 1" << endl;
+	    par_sieve<<<nblocks, tpb>>>(d_par_array, n, sqrt_n, 2, sqrt_n);
+	    cudaDeviceSynchronize();
+    } else if (n <= 27500000) {
+        cout << "Kernel call 1" << endl;
+	    par_sieve<<<nblocks, tpb>>>(d_par_array, n, sqrt_n, 2, 1000);
+	    cudaDeviceSynchronize();
+        cout << "Kernel call 2" << endl;
+	    par_sieve<<<nblocks, tpb>>>(d_par_array, n, sqrt_n, 1001, 3000);
+	    cudaDeviceSynchronize();
+        cout << "Kernel call 3" << endl;
+	    par_sieve<<<nblocks, tpb>>>(d_par_array, n, sqrt_n, 3001, sqrt_n);
+	    cudaDeviceSynchronize();
+    } else {
+        cout << "I have not been able to get n > 27 500 000 to run without without CUDA launch timeout" << endl;
+        cout << "Exiting now\n";
+        return 0;
+    }
 
 	// Error checking
 	cudaError_t kernel_error = cudaGetLastError();
@@ -152,9 +184,15 @@ int main(int argc, char** argv) {
 		// print the CUDA error message and exit
 		printf("CUDA error: %s\n", cudaGetErrorString(kernel_error));
 	}
+
+    without_memcpy_runtime = clock() - without_memcpy_start;
+    cout << "parallel run time (in milliseconds) WITHOUT cudaMemcpy: " << (without_memcpy_runtime * 1000 / CLOCKS_PER_SEC) << endl;
 	
 
 	cudaMemcpy((void*)par_array, (void*)d_par_array, sizeof(int) * (n-1), cudaMemcpyDeviceToHost);
+    
+    with_memcpy_runtime = clock() - with_memcpy_start;
+    cout << "parallel run time (in milliseconds) WITH cudaMemcpy: " << (with_memcpy_runtime * 1000 / CLOCKS_PER_SEC) << endl;
 	//print_prime(par_array, n);
 
 	diff_prime(seq_array, par_array, n);
