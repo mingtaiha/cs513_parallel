@@ -1,3 +1,13 @@
+Remember to run the following command to be able to compile and run CUDA code on iLAB machines
+
 export PATH=$PATH:/usr/local/cuda-7.5/bin
+
+
+To compile code
+
 nvcc prime_numbers.cu -o prime_numbers.o
+
+
+To run code
+
 ./prime_numbers.o [n, n>0, n integer]
