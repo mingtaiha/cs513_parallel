@@ -75,7 +75,7 @@ void getMulAtomic(MatrixInfo * mat, MatrixInfo * vec, MatrixInfo * res, int bloc
     printf("Atomic Kernel Time: %lu micro-seconds\n", 1000000 * (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1000);
     /*Deallocate.*/
 
-    cudaMemcpy(out_vec, d_out_vec, mat->M * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(res->val, d_out_vec, mat->M * sizeof(float), cudaMemcpyDeviceToHost);
 
     free(out_vec);
     cudaFree(d_rIndex);
