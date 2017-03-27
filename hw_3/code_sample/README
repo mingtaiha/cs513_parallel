@@ -1,0 +1,5 @@
+HW3: SPMV
+By Ming Tai Ha
+Compile with `make`
+
+NOTE:: design algorithm has memory leaks :(
