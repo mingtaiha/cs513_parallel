@@ -1,0 +1,60 @@
+cant
+Atomic Kernel Time: 309 micro-seconds
+Segmented Kernel Time: 549 micro-seconds
+CUDA error: an illegal memory access was encountered
+circuit5M_dc
+Atomic Kernel Time: 2454 micro-seconds
+Segmented Kernel Time: 4948 micro-seconds
+CUDA error: an illegal memory access was encountered
+consph
+Atomic Kernel Time: 452 micro-seconds
+Segmented Kernel Time: 836 micro-seconds
+CUDA error: an illegal memory access was encountered
+FullChip
+Atomic Kernel Time: 14348 micro-seconds
+Segmented Kernel Time: 6967 micro-seconds
+Segmented Kernel Time: 12829 micro-seconds
+mac_econ_fwd500
+Atomic Kernel Time: 257 micro-seconds
+Segmented Kernel Time: 430 micro-seconds
+Segmented Kernel Time: 711 micro-seconds
+mc2depi
+Atomic Kernel Time: 276 micro-seconds
+Segmented Kernel Time: 597 micro-seconds
+Segmented Kernel Time: 939 micro-seconds
+pdb1HYS
+Atomic Kernel Time: 372 micro-seconds
+Segmented Kernel Time: 566 micro-seconds
+CUDA error: an illegal memory access was encountered
+pwtk
+Atomic Kernel Time: 901 micro-seconds
+Segmented Kernel Time: 1493 micro-seconds
+CUDA error: an illegal memory access was encountered
+rail4284
+Atomic Kernel Time: 2989 micro-seconds
+Segmented Kernel Time: 2991 micro-seconds
+Segmented Kernel Time: 6087 micro-seconds
+rma10
+Atomic Kernel Time: 524 micro-seconds
+Segmented Kernel Time: 616 micro-seconds
+Segmented Kernel Time: 1168 micro-seconds
+scircuit
+Atomic Kernel Time: 178 micro-seconds
+Segmented Kernel Time: 323 micro-seconds
+Segmented Kernel Time: 517 micro-seconds
+shipsec1
+Atomic Kernel Time: 600 micro-seconds
+Segmented Kernel Time: 1037 micro-seconds
+Segmented Kernel Time: 1917 micro-seconds
+turon_m
+Atomic Kernel Time: 185 micro-seconds
+Segmented Kernel Time: 301 micro-seconds
+Segmented Kernel Time: 452 micro-seconds
+watson_2
+Atomic Kernel Time: 401 micro-seconds
+Segmented Kernel Time: 503 micro-seconds
+Segmented Kernel Time: 960 micro-seconds
+webbase-1M
+Atomic Kernel Time: 498 micro-seconds
+Segmented Kernel Time: 840 micro-seconds
+CUDA error: an illegal memory access was encountered
