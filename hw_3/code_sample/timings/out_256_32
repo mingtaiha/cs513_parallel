@@ -1,0 +1,189 @@
+cant
+Reading matrix from cant/cant.mtx
+Reading vector from vec_cant
+Atomic Kernel Time: 435 micro-seconds
+So long and thank you for the fish!
+Reading matrix from cant/cant.mtx
+Reading vector from vec_cant
+Segmented Kernel Time: 821 micro-seconds
+So long and thank you for the fish!
+Reading matrix from cant/cant.mtx
+Reading vector from vec_cant
+CUDA error: an illegal memory access was encountered
+circuit5M_dc
+Reading matrix from circuit5M_dc/circuit5M_dc.mtx
+Reading vector from vec_circuit5M_dc
+Atomic Kernel Time: 4039 micro-seconds
+So long and thank you for the fish!
+Reading matrix from circuit5M_dc/circuit5M_dc.mtx
+Reading vector from vec_circuit5M_dc
+Segmented Kernel Time: 7305 micro-seconds
+So long and thank you for the fish!
+Reading matrix from circuit5M_dc/circuit5M_dc.mtx
+Reading vector from vec_circuit5M_dc
+CUDA error: an illegal memory access was encountered
+consph
+Reading matrix from consph/consph.mtx
+Reading vector from vec_consph
+Atomic Kernel Time: 600 micro-seconds
+So long and thank you for the fish!
+Reading matrix from consph/consph.mtx
+Reading vector from vec_consph
+Segmented Kernel Time: 1218 micro-seconds
+So long and thank you for the fish!
+Reading matrix from consph/consph.mtx
+Reading vector from vec_consph
+CUDA error: an illegal memory access was encountered
+FullChip
+Reading matrix from FullChip/FullChip.mtx
+Reading vector from vec_FullChip
+Atomic Kernel Time: 14587 micro-seconds
+So long and thank you for the fish!
+Reading matrix from FullChip/FullChip.mtx
+Reading vector from vec_FullChip
+Segmented Kernel Time: 10239 micro-seconds
+So long and thank you for the fish!
+Reading matrix from FullChip/FullChip.mtx
+Reading vector from vec_FullChip
+Segmented Kernel Time: 15690 micro-seconds
+So long and thank you for the fish!
+mac_econ_fwd500
+Reading matrix from mac_econ_fwd500/mac_econ_fwd500.mtx
+Reading vector from vec_mac_econ_fwd500
+Atomic Kernel Time: 367 micro-seconds
+So long and thank you for the fish!
+Reading matrix from mac_econ_fwd500/mac_econ_fwd500.mtx
+Reading vector from vec_mac_econ_fwd500
+Segmented Kernel Time: 587 micro-seconds
+So long and thank you for the fish!
+Reading matrix from mac_econ_fwd500/mac_econ_fwd500.mtx
+Reading vector from vec_mac_econ_fwd500
+Segmented Kernel Time: 830 micro-seconds
+So long and thank you for the fish!
+mc2depi
+Reading matrix from mc2depi/mc2depi.mtx
+Reading vector from vec_mc2depi
+Atomic Kernel Time: 430 micro-seconds
+So long and thank you for the fish!
+Reading matrix from mc2depi/mc2depi.mtx
+Reading vector from vec_mc2depi
+Segmented Kernel Time: 848 micro-seconds
+So long and thank you for the fish!
+Reading matrix from mc2depi/mc2depi.mtx
+Reading vector from vec_mc2depi
+Segmented Kernel Time: 1188 micro-seconds
+So long and thank you for the fish!
+pdb1HYS
+Reading matrix from pdb1HYS/pdb1HYS.mtx
+Reading vector from vec_pdb1HYS
+Atomic Kernel Time: 460 micro-seconds
+So long and thank you for the fish!
+Reading matrix from pdb1HYS/pdb1HYS.mtx
+Reading vector from vec_pdb1HYS
+Segmented Kernel Time: 870 micro-seconds
+So long and thank you for the fish!
+Reading matrix from pdb1HYS/pdb1HYS.mtx
+Reading vector from vec_pdb1HYS
+CUDA error: an illegal memory access was encountered
+pwtk
+Reading matrix from pwtk/pwtk.mtx
+Reading vector from vec_pwtk
+Atomic Kernel Time: 1185 micro-seconds
+So long and thank you for the fish!
+Reading matrix from pwtk/pwtk.mtx
+Reading vector from vec_pwtk
+Segmented Kernel Time: 2350 micro-seconds
+So long and thank you for the fish!
+Reading matrix from pwtk/pwtk.mtx
+Reading vector from vec_pwtk
+CUDA error: an illegal memory access was encountered
+rail4284
+Reading matrix from rail4284/rail4284.mtx
+Reading vector from vec_rail4284
+Atomic Kernel Time: 4165 micro-seconds
+So long and thank you for the fish!
+Reading matrix from rail4284/rail4284.mtx
+Reading vector from vec_rail4284
+Segmented Kernel Time: 4621 micro-seconds
+So long and thank you for the fish!
+Reading matrix from rail4284/rail4284.mtx
+Reading vector from vec_rail4284
+Segmented Kernel Time: 7159 micro-seconds
+So long and thank you for the fish!
+rma10
+Reading matrix from rma10/rma10.mtx
+Reading vector from vec_rma10
+Atomic Kernel Time: 471 micro-seconds
+So long and thank you for the fish!
+Reading matrix from rma10/rma10.mtx
+Reading vector from vec_rma10
+Segmented Kernel Time: 943 micro-seconds
+So long and thank you for the fish!
+Reading matrix from rma10/rma10.mtx
+Reading vector from vec_rma10
+Segmented Kernel Time: 1438 micro-seconds
+So long and thank you for the fish!
+scircuit
+Reading matrix from scircuit/scircuit.mtx
+Reading vector from vec_scircuit
+Atomic Kernel Time: 278 micro-seconds
+So long and thank you for the fish!
+Reading matrix from scircuit/scircuit.mtx
+Reading vector from vec_scircuit
+Segmented Kernel Time: 443 micro-seconds
+So long and thank you for the fish!
+Reading matrix from scircuit/scircuit.mtx
+Reading vector from vec_scircuit
+Segmented Kernel Time: 613 micro-seconds
+So long and thank you for the fish!
+shipsec1
+Reading matrix from shipsec1/shipsec1.mtx
+Reading vector from vec_shipsec1
+Atomic Kernel Time: 798 micro-seconds
+So long and thank you for the fish!
+Reading matrix from shipsec1/shipsec1.mtx
+Reading vector from vec_shipsec1
+Segmented Kernel Time: 1586 micro-seconds
+So long and thank you for the fish!
+Reading matrix from shipsec1/shipsec1.mtx
+Reading vector from vec_shipsec1
+Segmented Kernel Time: 2379 micro-seconds
+So long and thank you for the fish!
+turon_m
+Reading matrix from turon_m/turon_m.mtx
+Reading vector from vec_turon_m
+Atomic Kernel Time: 258 micro-seconds
+So long and thank you for the fish!
+Reading matrix from turon_m/turon_m.mtx
+Reading vector from vec_turon_m
+Segmented Kernel Time: 415 micro-seconds
+So long and thank you for the fish!
+Reading matrix from turon_m/turon_m.mtx
+Reading vector from vec_turon_m
+Segmented Kernel Time: 551 micro-seconds
+So long and thank you for the fish!
+watson_2
+Reading matrix from watson_2/watson_2.mtx
+Reading vector from vec_watson_2
+Atomic Kernel Time: 511 micro-seconds
+So long and thank you for the fish!
+Reading matrix from watson_2/watson_2.mtx
+Reading vector from vec_watson_2
+Segmented Kernel Time: 751 micro-seconds
+So long and thank you for the fish!
+Reading matrix from watson_2/watson_2.mtx
+Reading vector from vec_watson_2
+Segmented Kernel Time: 1145 micro-seconds
+So long and thank you for the fish!
+webbase-1M
+Reading matrix from webbase-1M/webbase-1M.mtx
+Reading vector from vec_webbase-1M
+Atomic Kernel Time: 673 micro-seconds
+So long and thank you for the fish!
+Reading matrix from webbase-1M/webbase-1M.mtx
+Reading vector from vec_webbase-1M
+Segmented Kernel Time: 1239 micro-seconds
+So long and thank you for the fish!
+Reading matrix from webbase-1M/webbase-1M.mtx
+Reading vector from vec_webbase-1M
+CUDA error: an illegal memory access was encountered
