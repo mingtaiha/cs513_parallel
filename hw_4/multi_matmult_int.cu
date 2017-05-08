@@ -9,6 +9,9 @@
 #define NUM_THREADS 1024
 #define MOD_BASE 10007
 
+int NUM_DIM;
+int * MAT_DIM;
+int ** MAT_LIST;
 
 int find_max(int * arr, int num_elem)
 {
@@ -412,7 +415,7 @@ int * gpu_multi_block_algo(int num_dim, int * mat_dim, int ** mat_list)
         cudaMemcpy(out_mat, d_int_output_mat2, mat_dim[0] * mat_dim[num_dim-1] * sizeof(int), cudaMemcpyDeviceToHost);   
     }
 
-    printf("%d %d\n", mat_dim[mat_list_partition[0]], mat_dim[mat_list_partition[nblocks]]);
+    printf("rows:%d  cols: %d\n", mat_dim[mat_list_partition[0]], mat_dim[mat_list_partition[nblocks]]);
     printf("printing gpu (using %d blocks) results\n", nblocks);
     print_mat(out_mat, mat_dim[0], mat_dim[num_dim-1]);
     printf("\n");
@@ -448,6 +451,29 @@ int * gpu_multi_block_algo(int num_dim, int * mat_dim, int ** mat_list)
 
 }
 
+void read_file(char * filename)//, int * num_dim, int * mat_dim, int ** mat_list)
+{
+
+    FILE * fp;
+    fp = fopen(filename, "r");
+
+    fscanf(fp, "%d", &NUM_DIM);
+
+    MAT_DIM = (int *) malloc(NUM_DIM * sizeof(int));
+    for (int i = 0; i < NUM_DIM; i++) {
+        fscanf(fp, "%d", &MAT_DIM[i]);
+    }
+
+    MAT_LIST = (int **) malloc((NUM_DIM - 1) * sizeof(int *));
+
+    for (int arr_i = 0; arr_i < (NUM_DIM - 1); arr_i++) {
+        MAT_LIST[arr_i] = (int *) malloc(MAT_DIM[arr_i] * MAT_DIM[arr_i + 1] * sizeof(int));
+        for (int i = 0; i < (MAT_DIM[arr_i] * MAT_DIM[arr_i + 1]); i++) {
+            fscanf(fp, "%d", &MAT_LIST[arr_i][i]);
+        }
+    }
+}
+
 
 void usage() {
 
@@ -470,10 +496,42 @@ int main(int argc, char ** argv)
 
         if ((atoi(argv[2]) >= 0) && (atoi(argv[2]) < 3)) {
             algorithm = atoi(argv[2]);
-        } else { usage(); }
-    } else { usage(); }
+        } else { 
+            usage(); 
+            return 0;
+            }
+    } else { 
+        usage(); 
+        return 0;
+        }
 
+    read_file(filename);
+/*
+    printf("%d\n", NUM_DIM);
 
+    for (int i = 0; i < NUM_DIM; i++) {
+        printf("%d ", MAT_DIM[i]);
+    }
+    printf("\n");
+
+    for (int arr_i = 0; arr_i < (NUM_DIM - 1); arr_i++) {
+        for (int i = 0; i < MAT_DIM[arr_i]; i++) {
+            for (int j = 0; j < MAT_DIM[arr_i + 1]; j++) {
+                printf("%d ", MAT_LIST[arr_i][(i * MAT_DIM[arr_i + 1]) + j]);
+            }
+            printf("\n");
+        }
+    }
+*/
+
+/*
+    for (int i = 0; i < num_dim; i++) {
+        printf("%d ", mat_dim[i]);
+    }
+    printf("\n");
+*/
+
+/*
     int num_dim = 45;
     int num_mat = num_dim - 1;
     int * mat_dim = def_mat_dim(num_dim);
@@ -487,214 +545,18 @@ int main(int argc, char ** argv)
         //printf("%d %d\n", mat_dim[k], mat_dim[k+1]);
         //print_mat(mat_list[k], mat_dim[k], mat_dim[k+1]);
     }
-    
+*/    
+
+
     if (algorithm == 0) {
-        product_mat = cpu_algo(num_dim, mat_dim, mat_list);
+        product_mat = cpu_algo(NUM_DIM, MAT_DIM, MAT_LIST);
     } 
     else if (algorithm == 1) {
-        product_mat = gpu_one_block_algo(num_dim, mat_dim, mat_list);
+        product_mat = gpu_one_block_algo(NUM_DIM, MAT_DIM, MAT_LIST);
     } else {
-        product_mat = gpu_multi_block_algo(num_dim, mat_dim, mat_list);
-    }
-    return 0;
-
-    printf("Copying matrix dimensions to device\n");
-
-    int * d_mat_dim;
-    cudaMalloc((void **)&d_mat_dim, num_dim * sizeof(int));
-    cudaMemcpy(d_mat_dim, mat_dim, num_dim * sizeof(int), cudaMemcpyHostToDevice);
-
-    printf("Creating Matrix from on host\n");
-
-/*
-    int k;
-    for (k = 0; k < num_mat; k++) {
-        //printf("================= MATRIX %d ====================\n", k);
-        //printf("%d %d\n", mat_dim[k], mat_dim[k+1]);
-        mat_list[k] = creat_mat(mat_dim[k], mat_dim[k+1]);
-        //printf("%d %d\n", mat_dim[k], mat_dim[k+1]);
-        //print_mat(mat_list[k], mat_dim[k], mat_dim[k+1]);
-    }
-*/    
-    printf("Allocating space to store output matrix\n");
-    int * out_mat = (int *) calloc(max_dim * max_dim, sizeof(int));
-    int * d_out_mat1, * d_out_mat2;
-    cudaMalloc((void **) &d_out_mat1, max_dim * max_dim * sizeof(int));
-    cudaMalloc((void **) &d_out_mat2, max_dim * max_dim * sizeof(int));
-    cudaMemcpy(d_out_mat1, out_mat, max_dim * max_dim * sizeof(int), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_out_mat2, out_mat, max_dim * max_dim * sizeof(int), cudaMemcpyHostToDevice);
-
-    printf("Allocating space for each matrix, and storing pointer address of matrices on the host\n");
-    int ** int_mat_list = (int **) malloc(num_mat * sizeof(int *));
-    for (int k = 0; k < num_mat; k++) {
-        cudaMalloc((void **)&int_mat_list[k], mat_dim[k] * mat_dim[k+1] * sizeof(int));
-        cudaMemcpy(int_mat_list[k], mat_list[k], mat_dim[k] * mat_dim[k+1] * sizeof(int), cudaMemcpyHostToDevice);
+        product_mat = gpu_multi_block_algo(NUM_DIM, MAT_DIM, MAT_LIST);
     }
 
-    printf("Copying pointer addresses of matrices from host to device\n");
-    int ** d_mat_list;
-    cudaMalloc(&d_mat_list, num_mat * sizeof(int *));
-    cudaMemcpy(d_mat_list, int_mat_list, num_mat * sizeof(int *), cudaMemcpyHostToDevice);
-
-    int nblocks = 6;
-
-    printf("Allocating a set of intermediate arrays\n");
-//  Allocating a set of intermediate 
-    int ** int_mat1, ** int_mat2;
-    int_mat1 = (int **) malloc(nblocks * sizeof(int *));
-    int_mat2 = (int **) malloc(nblocks * sizeof(int *));
-    for (int k = 0; k < nblocks; k++) {
-        cudaMalloc((void **)&int_mat1[k], max_dim * max_dim * sizeof(int));
-        cudaMalloc((void **)&int_mat2[k], max_dim * max_dim * sizeof(int));
-        cudaMemcpy(int_mat1[k], out_mat, max_dim * max_dim * sizeof(int), cudaMemcpyHostToDevice);
-        cudaMemcpy(int_mat2[k], out_mat, max_dim * max_dim * sizeof(int), cudaMemcpyHostToDevice);
-    }
-
-    printf("allocating final collection of intermediate arrays\n");
-    int ** int_mat_final = (int **) malloc(nblocks * sizeof(int *));
-    int ** d_int_mat_final;
-    cudaMalloc((void **)&d_int_mat_final, nblocks * sizeof(int *));
-
-
-    int * mat_list_partition = equipartition(num_dim, nblocks);
-    printf("partition\n");
-    print_mat(mat_list_partition, 1, nblocks + 1);
-
-    printf("mat_dim\n");
-    print_mat(mat_dim, 1, num_dim);
-    int * int_mat_dim = (int *) malloc((nblocks + 1) * sizeof(int));
-    for (int i = 0; i < nblocks + 1; i++) {
-        int_mat_dim[i] = mat_dim[mat_list_partition[i]];
-    }
-    printf("partition mat_dim\n");
-    print_mat(int_mat_dim, 1, nblocks + 1);
-    printf("\n");
-    int * d_int_mat_dim;
-    cudaMalloc((void **)&d_int_mat_dim, (nblocks + 1) * sizeof(int));
-    cudaMemcpy(d_int_mat_dim, int_mat_dim, (nblocks + 1) * sizeof(int), cudaMemcpyHostToDevice);
-
-    int * d_int_output_mat1, * d_int_output_mat2;
-    cudaMalloc((void **)&d_int_output_mat1, max_dim * max_dim * sizeof(int));
-    cudaMalloc((void **)&d_int_output_mat2, max_dim * max_dim * sizeof(int));
-    cudaMemcpy(d_int_output_mat1, out_mat, max_dim * max_dim * sizeof(int), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_int_output_mat2, out_mat, max_dim * max_dim * sizeof(int), cudaMemcpyHostToDevice);
-
-
-
-    cudaError_t error = cudaGetLastError();
-    if(error != cudaSuccess)
-    {
-       // print the CUDA error message and exit
-       printf("CUDA error: %s\n", cudaGetErrorString(error));
-       exit(-1);
-    }
-
-    //printf("%d %d %d\n", mat_dim[0], mat_dim[1], mat_dim[2]);
-    //matmult<<<dimGrid, dimBlock>>>(int_mat_list[0], int_mat_list[1], d_out_mat, mat_dim[0], mat_dim[1], mat_dim[1], mat_dim[2]);
-    //matmult<<<1, NUM_THREADS>>>(int_mat_list[0], int_mat_list[1], d_out_mat, mat_dim[0], mat_dim[1], mat_dim[1], mat_dim[2]);
-    //cudaThreadSynchronize();
-    //multi_matmult<<<1, NUM_THREADS>>>(num_dim, d_mat_dim, d_mat_list, d_out_mat);
-    //gpuErrchk(cudaPeekAtLastError());
-
-    //gpu_seq_multi_matmult<<<1, NUM_THREADS>>>(num_dim, d_mat_dim, d_mat_list, d_out_mat1, d_out_mat2);
-    //cudaThreadSynchronize();
-
-/*
-    int ** tmp = (int **) malloc((num_dim - 1) * sizeof(int *));
-    cudaMemcpy(tmp, d_mat_list, num_mat * sizeof(int *), cudaMemcpyDeviceToHost);
-    for (int i = 0; i < num_dim - 1; i++) {
-        printf("%p\n", tmp[i]);
-        cudaMemcpy(out_mat, tmp[i], mat_dim[i] * mat_dim[i+1] * sizeof(int), cudaMemcpyDeviceToHost);
-        print_mat(out_mat, mat_dim[i], mat_dim[i+1]);
-
-    }
-*/
-/*
-    int iii[] = {0, 0, 0, 0, 0};
-    int * d_iii;
-    cudaMalloc((void **)&d_iii,5 *  sizeof(int));
-    cudaMemcpy(d_iii, iii, 5 * sizeof(int), cudaMemcpyHostToDevice);
-*/
-    for (int i = 0; i < nblocks; i++) {
-
-        printf("nblocks %d, i %d\n", nblocks, i);
-        printf("mat_list_partition %d %d\n", mat_list_partition[i], mat_list_partition[i+1] - 1);
-        printf("end mat_dim %d %d\n", mat_dim[mat_list_partition[i]], mat_dim[mat_list_partition[i+1]]);
-        gpu_par_multi_matmult<<<1, NUM_THREADS>>>(mat_list_partition[i], mat_list_partition[i+1] + 1, d_mat_dim, d_mat_list, int_mat1[i], int_mat2[i]);
-//        cudaMemcpy(iii, d_iii, 5 * sizeof(int), cudaMemcpyDeviceToHost);
-//        printf("num_products %d\n", iii[0]);
-//        printf("num_rows %d\n", iii[1]);
-//        printf("num_cols %d\n", iii[2]);
-    }
-    cudaDeviceSynchronize();
-
-// Break up case for when only one block is chosen, and when many blocks (more than 1) is chosen
-
-    //print_mat((int*)int_mat1, 1, nblocks);
-    //print_mat((int*)int_mat2, 1, nblocks);
-    for (int i = 0; i < nblocks; i++) {
-        cudaMemcpy(out_mat, int_mat1[i], mat_dim[mat_list_partition[i]] * mat_dim[mat_list_partition[i+1]] * sizeof(int), cudaMemcpyDeviceToHost);
-        printf("printing int_mat1[%d]\n", i);
-        print_mat(out_mat, mat_dim[mat_list_partition[i]], mat_dim[mat_list_partition[i+1]]);
-        cudaMemcpy(out_mat, int_mat2[i], mat_dim[mat_list_partition[i]] * mat_dim[mat_list_partition[i+1]] * sizeof(int), cudaMemcpyDeviceToHost);
-        printf("printing int_mat2[%d]\n", i);
-        print_mat(out_mat, mat_dim[mat_list_partition[i]], mat_dim[mat_list_partition[i+1]]);
-        if ((mat_list_partition[i+1] - mat_list_partition[i]) % 2 == 1) {
-            int_mat_final[i] = int_mat1[i];
-        } else {
-            int_mat_final[i] = int_mat2[i];
-        }
-    }
-    //print_mat((int*)int_mat_final, 1, nblocks);
-    //cudaMemcpy(out_mat, int_mat_final, mat_dim[mat_list_partition[i]] * mat_dim[mat_list_partition[i]] * sizeof(int), cudaMemcpyDeviceToHost);
-
-    cudaMemcpy(d_int_mat_final, int_mat_final, nblocks * sizeof(int *), cudaMemcpyHostToDevice);
-
-    cudaDeviceSynchronize();
-
-    
-    printf("Calling last kernel\n");
-    gpu_par_multi_matmult<<<1, NUM_THREADS>>>(0, nblocks + 1, d_int_mat_dim, d_int_mat_final, d_int_output_mat1, d_int_output_mat2); //, d_iii);
-    cudaDeviceSynchronize();
-
-
-    error = cudaGetLastError();
-    if(error != cudaSuccess)
-    {
-       // print the CUDA error message and exit
-       printf("CUDA error: %s\n", cudaGetErrorString(error));
-       exit(-1);
-    }
-
-    if (nblocks % 2 == 1) {
-        cudaMemcpy(out_mat, d_int_output_mat1, mat_dim[0] * mat_dim[num_dim-1] * sizeof(int), cudaMemcpyDeviceToHost);   
-    } else {
-        cudaMemcpy(out_mat, d_int_output_mat2, mat_dim[0] * mat_dim[num_dim-1] * sizeof(int), cudaMemcpyDeviceToHost);   
-    }
-
-    printf("%d %d\n", mat_dim[mat_list_partition[0]], mat_dim[mat_list_partition[nblocks]]);
-    printf("gpu par\n");
-    print_mat(out_mat, mat_dim[0], mat_dim[num_dim-1]);
-    printf("\n");
-//    cudaMemcpy(iii, d_iii, 5 * sizeof(int), cudaMemcpyDeviceToHost);
-//    printf("num_products %d\n", iii[0]);
-//    printf("num_rows %d\n", iii[1]);
-//    printf("num_cols %d\n", iii[2]);
-
-    //if_mats_equal(out_mat, cpu_mat, mat_dim[0], mat_dim[num_dim-1]);
-/*    
-    if (num_dim % 2 == 1) {
-        cudaMemcpy(out_mat, d_out_mat1, mat_dim[0] * mat_dim[num_dim-1] * sizeof(int), cudaMemcpyDeviceToHost);
-    } else {
-        cudaMemcpy(out_mat, d_out_mat2, mat_dim[0] * mat_dim[num_dim-1] * sizeof(int), cudaMemcpyDeviceToHost);
-    }
-
-    printf("gpu seq\n");
-    print_mat(out_mat, mat_dim[0], mat_dim[num_dim-1]);
-    printf("\n");
-
-    if_mats_equal(out_mat, cpu_mat, mat_dim[0], mat_dim[num_dim-1]);
-*/    
     return 0;
 
 }
